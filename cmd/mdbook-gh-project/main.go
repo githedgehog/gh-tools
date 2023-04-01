@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"os"
 
 	"github.com/pkg/errors"
@@ -19,7 +20,8 @@ func main() {
 
 			items, err := gh.GetProjectItems(context.Background(), "PVT_kwDOBvRah84AMA6Y")
 			if err != nil {
-				return errors.Wrap(err, "error getting github project items")
+				log.Printf("Error getting github items, fallback to simple processing: %#v\n", err)
+				items = make(map[string]github.ProjectItem)
 			}
 
 			return errors.Wrap(mdbook.NewGitHubProjectPreprocessor("githedgehog", items).Process(os.Stdin, os.Stdout),
