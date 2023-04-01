@@ -23,6 +23,7 @@ func main() {
 				log.Printf("Error getting github items, fallback to simple processing: %#v\n", err)
 				items = make(map[string]github.ProjectItem)
 			}
+			log.Println("Loaded project items:", len(items))
 
 			return errors.Wrap(mdbook.NewGitHubProjectPreprocessor("githedgehog", items).Process(os.Stdin, os.Stdout),
 				"error processing book")
