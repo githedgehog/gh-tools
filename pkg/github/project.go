@@ -35,7 +35,7 @@ func (gh *GitHub) GetProjectItems(ctx context.Context, project string) (map[stri
 			return nil, err
 		}
 
-		// fmt.Println("RateLimit", q.RateLimit)
+		// log.Println("RateLimit", q.RateLimit)
 
 		for _, item := range q.Node.Project.Items.Nodes {
 			items[item.Resource()] = item
@@ -64,6 +64,11 @@ type ProjectItem struct {
 			State        string
 			URL          string
 			ResourcePath string
+			Assignees    struct {
+				Nodes []struct {
+					Login string
+				}
+			} `graphql:"assignees(first: 10)"`
 		} `graphql:"... on Issue"`
 	}
 }
@@ -76,7 +81,7 @@ func (i ProjectItem) Estimate() float64 {
 	return i.FEstimate.V()
 }
 
-func (i ProjectItem) Iteration() string {
+func (i ProjectItem) Sprint() string {
 	return i.FIteration.V()
 }
 
@@ -104,7 +109,15 @@ func (i ProjectItem) Resource() string {
 	return i.Content.Issue.ResourcePath
 }
 
+func (i ProjectItem) Assignee() string {
+	if len(i.Content.Issue.Assignees.Nodes) == 0 {
+		return ""
+	}
+
+	return i.Content.Issue.Assignees.Nodes[0].Login
+}
+
 func (i ProjectItem) String() string {
 	return fmt.Sprintf("Issue{%s %s est=%.1f iter=%s jira=%s}",
-		i.Resource(), i.Status(), i.Estimate(), i.Iteration(), i.Jira())
+		i.Resource(), i.Status(), i.Estimate(), i.Sprint(), i.Jira())
 }
