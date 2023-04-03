@@ -109,5 +109,6 @@ func (p *GitHubProjectPreprocessor) formatGitHubItem(ref string) (string, error)
 			item.URL(), html.EscapeString(item.Title()), repo, number, item.Status(), item.Estimate()), nil
 	}
 
-	return fmt.Sprintf(" <a href=\"https://github.com/%s/issues/%s\">`%s#%s`</a> ", repo, number, repo, number), nil
+	return fmt.Sprintf(" <a href='https://github.com/githedgehog/%s/issues/%s'>`%s#%s`</a> ",
+		repo, number, repo, number), nil
 }
