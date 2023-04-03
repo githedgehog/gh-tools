@@ -25,6 +25,8 @@ func main() {
 			}
 			log.Println("Loaded project items:", len(items))
 
+			// log.Println(items)
+
 			return errors.Wrap(mdbook.NewGitHubProjectPreprocessor("githedgehog", items).Process(os.Stdin, os.Stdout),
 				"error processing book")
 		},

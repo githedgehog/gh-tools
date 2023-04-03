@@ -3,6 +3,7 @@ package mdbook
 import (
 	"encoding/json"
 	"fmt"
+	"html"
 	"io"
 	"log"
 	"os"
@@ -102,11 +103,11 @@ func (p *GitHubProjectPreprocessor) formatGitHubItem(ref string) (string, error)
 	}
 	repo := parts[0]
 	number := parts[1]
-	extra := ""
 
 	if item, ok := p.items[fmt.Sprintf("/%s/%s/issues/%s", p.org, repo, number)]; ok {
-		extra = fmt.Sprintf(": %s (%.1f)", item.Status(), item.Estimate())
+		return fmt.Sprintf(" <a href='%s' title='%s'>`%s#%s: %s (%.1f)`</a> ",
+			item.URL(), html.EscapeString(item.Title()), repo, number, item.Status(), item.Estimate()), nil
 	}
 
-	return fmt.Sprintf(" `%s#%s%s` ", repo, number, extra), nil
+	return fmt.Sprintf(" <a href=\"https://github.com/%s/issues/%s\">`%s#%s`</a> ", repo, number, repo, number), nil
 }
