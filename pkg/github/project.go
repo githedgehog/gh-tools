@@ -55,8 +55,11 @@ type ProjectItem struct {
 	Type       string
 	FStatus    FSingleSelect `graphql:"status: fieldValueByName(name: \"Status\")"`
 	FEstimate  FNumber       `graphql:"estimate: fieldValueByName(name: \"Estimate\")"`
-	FIteration FIteration    `graphql:"iteration: fieldValueByName(name: \"Iteration\")"`
+	FSprint    FIteration    `graphql:"iteration: fieldValueByName(name: \"Sprint\")"`
 	FJira      FText         `graphql:"jira: fieldValueByName(name: \"Jira\")"`
+	FMilestone FSingleSelect `graphql:"milestone: fieldValueByName(name: \"DevMilestone\")"`
+	FProgress  FSingleSelect `graphql:"progress: fieldValueByName(name: \"Progress\")"`
+	FComponent FSingleSelect `graphql:"component: fieldValueByName(name: \"Component\")"`
 	Content    struct {
 		Issue struct {
 			Title        string
@@ -82,11 +85,45 @@ func (i ProjectItem) Estimate() float64 {
 }
 
 func (i ProjectItem) Sprint() string {
-	return i.FIteration.V()
+	return i.FSprint.V()
 }
 
 func (i ProjectItem) Jira() string {
 	return i.FJira.V()
+}
+
+func (i ProjectItem) Milestone() string {
+	return i.FMilestone.V()
+}
+
+func (i ProjectItem) Progress() string {
+	return i.FProgress.V()
+}
+
+func (i ProjectItem) ProgressPercentage() float32 {
+	pr := i.Progress()
+	if len(pr) == 0 {
+		return 0
+	}
+
+	switch pr[0] {
+	case '1':
+		return 0.1
+	case '2':
+		return 0.3
+	case '4':
+		return 0.5
+	case '6':
+		return 0.7
+	case '8':
+		return 0.9
+	}
+
+	return 0
+}
+
+func (i ProjectItem) Component() string {
+	return i.FComponent.V()
 }
 
 func (i ProjectItem) Title() string {
@@ -115,6 +152,16 @@ func (i ProjectItem) Assignee() string {
 	}
 
 	return i.Content.Issue.Assignees.Nodes[0].Login
+}
+
+func (i ProjectItem) Assignees() []string {
+	assignees := make([]string, len(i.Content.Issue.Assignees.Nodes))
+
+	for i, node := range i.Content.Issue.Assignees.Nodes {
+		assignees[i] = node.Login
+	}
+
+	return assignees
 }
 
 func (i ProjectItem) String() string {
