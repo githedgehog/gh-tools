@@ -88,6 +88,10 @@ func (i ProjectItem) Sprint() string {
 	return i.FSprint.V()
 }
 
+func (i ProjectItem) SprintStartDate() string {
+	return i.FSprint.FValue.StartDate
+}
+
 func (i ProjectItem) Jira() string {
 	return i.FJira.V()
 }
@@ -101,6 +105,15 @@ func (i ProjectItem) Progress() string {
 }
 
 func (i ProjectItem) ProgressPercentage() float32 {
+	status := i.Status()
+
+	if status == "✅ Done" {
+		return 1
+	}
+	if status != "🏗 In progress" {
+		return 0
+	}
+
 	pr := i.Progress()
 	if len(pr) == 0 {
 		return 0
@@ -120,6 +133,10 @@ func (i ProjectItem) ProgressPercentage() float32 {
 	}
 
 	return 0
+}
+
+func (i ProjectItem) ProgressEstimate() float64 {
+	return i.Estimate() * float64(i.ProgressPercentage())
 }
 
 func (i ProjectItem) Component() string {

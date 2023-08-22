@@ -1,6 +1,8 @@
 package github
 
-import "time"
+import (
+	"time"
+)
 
 type RateLimit struct {
 	Limit     int
@@ -46,7 +48,9 @@ func (f FDate) V() time.Time {
 
 type FIteration struct {
 	FValue struct {
-		Title string
+		Title     string
+		StartDate string
+		Duration  int
 	} `graphql:"... on ProjectV2ItemFieldIterationValue"`
 }
 
