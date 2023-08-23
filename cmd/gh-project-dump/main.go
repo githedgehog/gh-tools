@@ -61,7 +61,10 @@ func main() {
 					continue
 				}
 
-				resource := strings.ReplaceAll(item.Resource()[13:], "/issues/", "#")
+				resource := item.Resource()
+				if strings.HasPrefix(resource, "/githedgehog/") {
+					resource = strings.ReplaceAll(item.Resource()[13:], "/issues/", "#")
+				}
 				records = append(records, []string{
 					name,
 					updated,
