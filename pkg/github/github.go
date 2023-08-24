@@ -14,7 +14,7 @@ type GitHub struct {
 
 func New() *GitHub {
 	src := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
+		&oauth2.Token{AccessToken: os.Getenv("MDBOOK_GH_PROJECT_TOKEN")},
 	)
 	httpClient := oauth2.NewClient(context.Background(), src)
 
